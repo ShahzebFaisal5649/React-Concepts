@@ -2,21 +2,58 @@
 
 A single-page React application that teaches React concepts by **actually using them live**, not just showing code snippets. Every topic in the sidebar has a working, clickable demonstration built directly into the app.
 
+## 🌐 Live Demo
+
+🔗 **Live Website:** https://shahzebfaisal5649.github.io/React-Concepts/
+
+🔗 **GitHub Repository:** https://github.com/ShahzebFaisal5649/React-Concepts
+
+---
+
+## 🚀 Features
+
+* 23+ React concepts explained with live demonstrations
+* Interactive examples instead of static code snippets
+* React Router protected and public routes
+* Context API for global state management
+* Local Storage, Session Storage, and Cookies demos
+* Fetch API and Axios examples
+* React Hooks demonstrations
+* Performance optimization examples
+* Responsive dashboard-style UI
+* Notes page with persistent storage
+* Dark/Light theme support
+
 ---
 
 ## 🚀 Quick Start
 
 ```bash
+# Clone repository
+git clone https://github.com/ShahzebFaisal5649/React-Concepts.git
+
+# Open project
+cd React-Concepts
+
 # Install dependencies
 npm install
 
-# Start the development server
+# Start development server
 npm run dev
 ```
 
-Then open **http://localhost:5173** in your browser.
+Open:
+
+http://localhost:5173
 
 ---
+
+## 🎯 Purpose
+
+Most React learning resources explain concepts theoretically. This project focuses on **learning by interaction**. Every concept includes a practical demonstration so users can observe React behavior directly inside the application.
+
+Whether you're a beginner learning React or someone revising concepts before interviews, this project serves as an interactive React reference guide.
+
 
 ## 📚 What It Teaches (23 Topics)
 
@@ -39,11 +76,11 @@ Then open **http://localhost:5173** in your browser.
 | JSX vs JS (compiled) | Side-by-side code blocks of source JSX and compiled JS output |
 
 ### Group 3 — Data Flow
-| Topic | What You Will See |
-|---|---|
-| Parent ↔ Child Communication | Child input updates parent state label in real-time |
-| What is State? | Lightbulb switch toggles `true/false`, room changes instantly |
-| What is Props? | Slider sends size prop to child, child text resizes live |
+| Topic                        | What You Will See                                             |
+| ------------------------------| ---------------------------------------------------------------|
+| Parent ↔ Child Communication | Child input updates parent state label in real-time           |
+| What is State?               | Lightbulb switch toggles `true/false`, room changes instantly |
+| What is Props?               | Slider sends size prop to child, child text resizes live      |
 
 ### Group 4 — Hooks
 | Topic | What You Will See |
