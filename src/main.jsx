@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import { UserProvider } from "./context/UserContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,7 +14,7 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     {/* BrowserRouter handles browser URL mapping and SPA navigation */}
-    <BrowserRouter>
+    <HashRouter>
       <QueryClientProvider client={queryClient}>
         {/* ThemeProvider distributes dark/light mode states */}
         <ThemeProvider>
@@ -24,6 +24,6 @@ createRoot(document.getElementById("root")).render(
           </UserProvider>
         </ThemeProvider>
       </QueryClientProvider>
-    </BrowserRouter>
+    </HashRouter>
   </React.StrictMode>
 );
