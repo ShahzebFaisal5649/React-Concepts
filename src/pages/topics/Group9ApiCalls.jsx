@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchService } from "../../services/fetchService";
 import { axiosService } from "../../services/axiosService";
@@ -149,7 +149,7 @@ export function AxiosVsFetchDemo() {
     setAxiosOutput("Requesting bad URL via Axios...");
     // We request invalid route
     axiosService.get("non-existent-path-abc123")
-      .then(data => {
+      .then(() => {
         // This block is skipped!
         setAxiosOutput("Axios resolved successfully (unexpected for 404)");
       })

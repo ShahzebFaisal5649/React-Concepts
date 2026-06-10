@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { Link, NavLink, useNavigate, useParams, useLocation } from "react-router-dom";
 
 // ==========================================
@@ -43,8 +43,7 @@ export function ReactRouterDemo() {
 // 2. Routes (Public vs Private) Demo
 // ==========================================
 export function RoutesPublicPrivateDemo() {
-  const navigate = useNavigate();
-
+  
   return (
     <div className="demo-box">
       <p>Check the security boundaries in this app:</p>

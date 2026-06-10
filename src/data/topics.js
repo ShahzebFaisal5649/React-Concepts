@@ -59,15 +59,16 @@ const virtualElement = {
     summary: "A Single Page Application is a website that loads only one HTML page once. As you click links, Javascript replaces the content dynamically without requesting a new HTML page from the server.",
     howItWorks: "In standard websites, clicking a link makes the browser ask the server for a completely new HTML file, causing a white flash/reload. In a React SPA, React Router intercepts the link clicks, updates the browser URL bar, and swaps the components on the screen instantly in JavaScript.",
     realLife: "Like a TV screen. When you change the channel, you don't throw away the TV and buy a new one. The TV screen stays the same, it just changes the picture pixels.",
-    codeExample: `// Instead of using standard <a href=\"/about\"> which reloads the page,
-// React Router uses the <Link to=\"/about\"> component to swap views in JS.
+    codeExample: `// Instead of using standard <a href="/about"> which reloads the page,
+// React Router uses the <Link to="/about"> component to swap views in JS.
+
 import { Link } from 'react-router-dom';
 
 function Navigation() {
   return (
     <nav>
       {/* Clicking this updates the view instantly in browser without page reload */}
-      <Link to=\"/topic/usestate\">Go to useState</Link>
+      <Link to="/topic/usestate">Go to useState</Link>
     </nav>
   );
 }`,
@@ -115,8 +116,8 @@ function WelcomeMessage(props) {
 function App() {
   return (
     <div>
-      <WelcomeMessage name=\"Alice\" />
-      <WelcomeMessage name=\"Bob\" />
+      <WelcomeMessage name="Alice" />
+      <WelcomeMessage name="Bob" />
     </div>
   );
 }`,
@@ -202,7 +203,7 @@ function Confirm() {
     howItWorks: "When you write JSX code, a compiler (like Babel or Vite's ESBuild) converts it before running. Writing `<button>Click</button>` in JSX is exactly the same as writing `React.createElement('button', null, 'Click')` in pure JavaScript.",
     realLife: "Using emojis vs writing words. Typing a thumbs-up emoji 👍 is faster and easier for humans, but it compiles to a computer-coded character value like 'U+1F44D' under the hood.",
     codeExample: `// What you write (JSX):
-const jsxBtn = <button className=\"btn\">Hello</button>;
+const jsxBtn = <button className="btn">Hello</button>;
 
 // What runs in the browser (JS):
 const jsBtn = React.createElement('button', { className: 'btn' }, 'Hello');`,
@@ -217,7 +218,7 @@ const jsBtn = React.createElement('button', { className: 'btn' }, 'Hello');`,
     howItWorks: "Standard Javascript contains variables, functions, and standard logic. JSX extends JS to allow tags like HTML inline. Because it is a hybrid, it requires compilation. The output is a standard JavaScript bundle containing function trees that standard browser runtimes understand perfectly.",
     realLife: "Translate a foreign document. You write in English (JSX, easier for you) but translate it to Spanish (pure JS) for a reader who only speaks Spanish (the browser).",
     codeExample: `// JSX version (what we write):
-const element = <div id=\"main\"><h1>Welcome</h1></div>;
+const element = <div id="main"><h1>Welcome</h1></div>;
 
 // Compiled JS version (what the browser runs):
 const element = React.createElement('div', { id: 'main' }, 
@@ -291,7 +292,7 @@ function Child(props) {
     howItWorks: "Props are used to pass data down the component tree. They are immutable, which means a child component cannot change the props it receives. If you need to change them, the parent must change the values it passes down.",
     realLife: "Like receiving a package from a delivery driver. You (child) can open and read/use the contents of the package, but you cannot change what the sender (parent) placed inside it before mailing.",
     codeExample: `// Parent passes properties down:
-<DisplayBoard message=\"Welcome to our site!\" textColor=\"blue\" />
+<DisplayBoard message="Welcome to our site!" textColor="blue" />
 
 // Child receives and displays them:
 function DisplayBoard(props) {
@@ -582,12 +583,12 @@ function App() {
   return (
     <BrowserRouter>
       <nav>
-        <Link to=\"/\">Home</Link> | <Link to=\"/about\">About</Link>
+        <Link to="/">Home</Link> | <Link to="/about">About</Link>
       </nav>
 
       <Routes>
-        <Route path=\"/\" element={<Home />} />
-        <Route path=\"/about\" element={<About />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
       </Routes>
     </BrowserRouter>
   );
@@ -610,12 +611,12 @@ function PrivateRoute(props) {
   
   // If logged in, show the inner route components (<Outlet />)
   // Otherwise, redirect to login page
-  return isLoggedIn ? <Outlet /> : <Navigate to=\"/login\" />;
+  return isLoggedIn ? <Outlet /> : <Navigate to="/login" />;
 }
 
 // Inside App.jsx routing definition:
 // <Route element={<PrivateRoute isLoggedIn={isLoggedIn} />}>
-//   <Route path=\"/notes\" element={<NotesPage />} />
+//   <Route path="/notes" element={<NotesPage />} />
 // </Route>`,
     howThisAppUsesIt: "We have created a Private Route for '/notes' (My Notes page). We also added a fake login toggle in the Header. When logged out, trying to navigate to '/notes' redirects you to '/login'. When logged in, it loads successfully.",
     outcomeToCheck: "1. Log out (via Header button if logged in). 2. Click the 'My Notes' link at the bottom of the sidebar or type `/notes` in the browser URL. Notice you get redirected to `/login`. 3. Log in, then try again: the notes page loads!"
@@ -635,11 +636,11 @@ function PrivateRoute(props) {
 
 function MainLayout() {
   return (
-    <div className=\"dashboard\">
+    <div className="dashboard">
       <Header />
-      <div className=\"dashboard-body\">
+      <div className="dashboard-body">
         <Sidebar />
-        <main className=\"content-slot\">
+        <main className="content-slot">
           {/* This is where child routes get rendered! */}
           <Outlet />
         </main>
@@ -662,7 +663,7 @@ function MainLayout() {
     howItWorks: "You place a `<link rel=\"preload\" href=\"...\" as=\"...\">` tag in the `<head>` of your HTML document. This tells the browser to fetch the file in parallel before it even starts executing the main Javascript bundle, speeding up load times.",
     realLife: "Calling a restaurant to order food while you are still driving there. When you arrive, the food is already cooked and waiting for you on the table.",
     codeExample: `<!-- Inside index.html head -->
-<link rel=\"preload\" href=\"/fonts/my-font.woff2\" as=\"font\" type=\"font/woff2\" crossorigin>`,
+<link rel="preload" href="/fonts/my-font.woff2" as="font" type="font/woff2" crossorigin>`,
     howThisAppUsesIt: "In our `index.html`, we have added a `<link rel=\"preload\">` for a Google Web Font to load the primary typography style early. On this topic page, we also provide a button that appends a preload link to the head dynamically to demonstrate the network fetch.",
     outcomeToCheck: "1. Open browser DevTools Network tab. 2. Reload the page. You will see the web font request fires at the very top of the list, right after the main HTML document, with a high priority."
   },
@@ -707,8 +708,8 @@ fetch("https://api.example.com/data", {
     summary: "Preload and prefetch are performance optimizations that you control. Preflight is a security mechanism enforced by the browser.",
     howItWorks: "Summary of differences:\n- **Preload**: High priority. Fetching resources needed *right now* on the current page.\n- **Prefetch**: Low priority. Fetching resources that *might* be needed later on future pages.\n- **Preflight**: Automatic security check. Browser checks cross-origin access permissions using OPTIONS before sending a non-simple request.",
     realLife: "Preload is placing keys in your pocket before leaving. Prefetch is carrying a spare tire in your car. Preflight is showing your ticket to a security guard before boarding a train.",
-    codeExample: `// Preload: <link rel=\"preload\" href=\"font.woff2\" as=\"font\" />
-// Prefetch: <link rel=\"prefetch\" href=\"next-page.js\" />
+    codeExample: `// Preload: <link rel="preload" href="font.woff2" as="font" />
+// Prefetch: <link rel="prefetch" href="next-page.js" />
 // Preflight: Handled automatically by browser fetch() when headers are present.`,
     howThisAppUsesIt: "We have built a triple-monitoring panel on this page where you can run all three processes side-by-side and see live visual bars demonstrating their execution timings.",
     outcomeToCheck: "Look at the visual timing simulator below. Click the start button and compare how early preload executes, when prefetch triggers during idle time, and how preflight delays the actual request."
