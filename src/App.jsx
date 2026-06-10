@@ -1,11 +1,11 @@
-import React, { useState, useMemo, useCallback, useContext } from "react";
-import { Routes, Route, Navigate, useNavigate, Outlet, useLocation } from "react-router-dom";
+import { useState, useMemo, useCallback, useContext } from "react";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { topics } from "./data/topics";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { ThemeContext } from "./context/ThemeContext";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-import TopicPage from "./components/TopicPage";
+import TopicPage from './components/TopicPage';
 import LoginPage from "./pages/LoginPage";
 import NotesPage from "./pages/NotesPage";
 import PrivateRoute from "./components/PrivateRoute";
@@ -14,7 +14,7 @@ import PrivateRoute from "./components/PrivateRoute";
 // MAIN LAYOUT COMPONENT
 // ============================================================================
 // It defines the persistent frame (Header & Sidebar) and mounts child routes in the Outlet.
-function DashboardLayout({ filteredTopics, onTopicSelect, isLoggedIn, onLoginToggle, searchQuery, setSearchQuery }) {
+function DashboardLayout({ filteredTopics, onTopicSelect, isLoggedIn, onLoginToggle, setSearchQuery }) {
   const { theme } = useContext(ThemeContext);
 
   return (
@@ -50,7 +50,8 @@ function DashboardLayout({ filteredTopics, onTopicSelect, isLoggedIn, onLoginTog
 // APP ENTRY POINT COMPONENT
 // ============================================================================
 export function App() {
-  const navigate = useNavigate();
+  // navigate removed (useNavigate kept in import only if used elsewhere, otherwise remove it too)
+
 
   // 1. Persistent User authentication state (saved in localStorage)
   const [isLoggedIn, setIsLoggedIn] = useState(() => {

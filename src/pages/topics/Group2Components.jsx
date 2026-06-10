@@ -266,8 +266,15 @@ export function ListsKeysDemo() {
   };
 
   const handleRemoveItem = (id) => {
-    setItems(items.filter(item => item.id !== id));
-  };
+  if (useIndexAsKey) {
+    console.warn(
+      "⚠️ React Keys Warning: You are removing an item while using array index as key. " +
+      "React cannot distinguish which item was removed — it will re-render all subsequent items incorrectly. " +
+      "Use stable unique IDs (like item.id) as keys instead."
+    );
+  }
+  setItems(items.filter(item => item.id !== id));
+};
 
   return (
     <div className="demo-box">
@@ -292,7 +299,16 @@ export function ListsKeysDemo() {
             name="use-index-key-cb"
             type="checkbox" 
             checked={useIndexAsKey}
-            onChange={(e) => setUseIndexAsKey(e.target.checked)}
+            onChange={(e) => {
+  setUseIndexAsKey(e.target.checked);
+  if (e.target.checked) {
+    console.warn(
+      "⚠️ React Keys Warning: Switched to index-based keys. " +
+      "Adding or removing items will cause React to misidentify elements. " +
+      "Always use stable unique IDs as keys in production."
+    );
+  }
+}}
           />
           Use array index as key instead of stable unique ID (warning mode)
         </label>

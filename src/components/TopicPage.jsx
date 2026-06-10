@@ -279,27 +279,30 @@ function RawTopicPage() {
       {/* Title */}
       <h2>{topic.title}</h2>
 
-      {/* 1. Quick Summary Section */}
-      <div className="topic-section summary-box">
-        <h3>💡 Quick Summary</h3>
-        <p>{topic.summary}</p>
-      </div>
-
-      {/* 2. How it works Section */}
-      <div className="topic-section">
-        <h3>🔍 How It Works</h3>
-        <div className="explain-text">
-          {topic.howItWorks.split("\n").map((para, index) => (
-            <p key={index}>{para}</p>
-          ))}
+      {/* Sections 1–3 grouped with React.Fragment — no extra wrapper div in DOM */}
+      <React.Fragment>
+        {/* 1. Quick Summary Section */}
+        <div className="topic-section summary-box">
+          <h3>💡 Quick Summary</h3>
+          <p>{topic.summary}</p>
         </div>
-      </div>
 
-      {/* 3. Real Life Example Section */}
-      <div className="topic-section analogy-box">
-        <h3>🏢 Real-Life Analogy</h3>
-        <p>{topic.realLife}</p>
-      </div>
+        {/* 2. How it works Section */}
+        <div className="topic-section">
+          <h3>🔍 How It Works</h3>
+          <div className="explain-text">
+            {topic.howItWorks.split("\n").map((para, index) => (
+              <p key={index}>{para}</p>
+            ))}
+          </div>
+        </div>
+
+        {/* 3. Real Life Example Section */}
+        <div className="topic-section analogy-box">
+          <h3>🏢 Real-Life Analogy</h3>
+          <p>{topic.realLife}</p>
+        </div>
+      </React.Fragment>
 
       {/* 4. Code Example Section */}
       <div className="topic-section">
@@ -342,5 +345,5 @@ function RawTopicPage() {
 }
 
 // Wrap the RawTopicPage with the HOC logger before exporting it
-export const TopicPage = withLogger(RawTopicPage);
+const TopicPage = withLogger(RawTopicPage);
 export default TopicPage;
