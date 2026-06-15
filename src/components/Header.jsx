@@ -36,20 +36,24 @@ export const Header = React.memo(function Header({ onSearchChange, isLoggedIn, o
   // Run this effect when the component mounts to register a keypress listener
   useEffect(() => {
     const handleKeyDown = (event) => {
-      // If the user is typing in any input, textarea, or content-editable area, do not intercept '/'
-      const active = document.activeElement;
-      if (
-        active &&
-        (active.tagName === "INPUT" ||
-          active.tagName === "TEXTAREA" ||
-          active.isContentEditable)
-      ) {
-        return;
-      }
-
       if (event.key === "/") {
-        event.preventDefault(); // Don't type the "/" into the box
-        searchInputRef.current?.focus(); // Focus the search box!
+        const active = document.activeElement;
+        
+        // If the user is typing in some OTHER input/textarea, do not intercept '/'
+        if (
+          active &&
+          active !== searchInputRef.current &&
+          (active.tagName === "INPUT" ||
+            active.tagName === "TEXTAREA" ||
+            active.isContentEditable)
+        ) {
+          return;
+        }
+
+        // For search input or body: focus, prevent typing '/', and select existing text
+        event.preventDefault();
+        searchInputRef.current?.focus();
+        searchInputRef.current?.select();
       }
     };
 
