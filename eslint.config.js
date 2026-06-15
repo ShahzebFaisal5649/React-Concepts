@@ -17,5 +17,19 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      // Disabling rules that conflict with educational render-counting demos
+      'react-hooks/refs': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/purity': 'off',
+      // Allow exporting contexts alongside components in demo contexts
+      'react-refresh/only-export-components': 'off',
+      // Allow unused variables to match standard react learning boilerplates
+      'no-unused-vars': ['warn', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^(React|useContext|CartContext)$',
+        ignoreRestSiblings: true 
+      }]
+    }
   },
 ])

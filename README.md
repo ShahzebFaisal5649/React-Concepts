@@ -12,7 +12,7 @@ A single-page React application that teaches React concepts by **actually using 
 
 ## 🚀 Features
 
-* 23+ React concepts explained with live demonstrations
+* 26+ React concepts explained with live demonstrations
 * Interactive examples instead of static code snippets
 * React Router protected and public routes
 * Context API for global state management
@@ -52,7 +52,7 @@ Most React learning resources explain concepts theoretically. This project focus
 
 Whether you're a beginner learning React or someone revising concepts before interviews, this project serves as an interactive React reference guide.
 
-## 📚 What It Teaches (23 Topics)
+## 📚 What It Teaches (26 Topics)
 
 ### Group 1 — React Fundamentals
 
@@ -73,6 +73,7 @@ Whether you're a beginner learning React or someone revising concepts before int
 | Styled Components | Inspect button in DevTools → see auto-hashed class names |
 | JSX vs JS Syntax | Two counters: one in JSX, one in `React.createElement()` — identical |
 | JSX vs JS (compiled) | Side-by-side code blocks of source JSX and compiled JS output |
+| JSX Runtime, Compilation & RAFCE | Interact with compilation tabs, file extension rules (.js vs .jsx), and VS Code snippet references |
 
 ### Group 3 — Data Flow
 
@@ -110,6 +111,7 @@ Whether you're a beginner learning React or someone revising concepts before int
 | --- | --- |
 | React Router DOM | URL changes on navigation; paste URL in new tab → opens same page |
 | Public vs Private Routes | Log out → try `/notes` → redirected to login page |
+| Private Route Auth Timing | Simulate slow 3-second authentication check with skeleton loading, ensuring no flashing |
 
 ### Group 7 — Dashboard Layout
 
@@ -134,6 +136,7 @@ Whether you're a beginner learning React or someone revising concepts before int
 | Axios | Same CRUD buttons — interceptor logs fire in console before each call |
 | Fetch vs Axios (404) | Both hit a broken URL — Fetch resolves, Axios throws immediately |
 | Axios + Preflight | Axios auth header triggers OPTIONS preflight in Network tab |
+| Fetch API 400 & 500 Error Codes | Trigger mock statuses (200, 404, 500, network error) to see why Fetch does not auto-throw |
 
 ---
 
@@ -210,6 +213,9 @@ Open the app and work through these checks:
 * [ ] **sessionStorage search:** Type in search → refresh page (F5) → search text remains; close tab → text gone
 * [ ] **Preflight:** Group 8 → click "Trigger Complex DELETE" → Network tab shows OPTIONS before DELETE
 * [ ] **Axios interceptor:** Group 9 → click any Axios button → console shows `[Axios Request Interceptor]` log
+* [ ] **JSX Runtime & RAFCE:** Group 2 → select compilation and VS Code tabs to check documentation and runtime outputs
+* [ ] **Private route auth timing:** Group 6 → run simulation to verify skeleton loading handles async authorization
+* [ ] **Fetch 400/500 errors:** Group 9 → verify that HTTP 404 and 500 don't cause automatic reject, but are manually handled via response.ok
 
 ---
 

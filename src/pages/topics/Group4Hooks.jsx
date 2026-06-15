@@ -5,31 +5,100 @@ import { UserContext } from "../../context/UserContext";
 // ==========================================
 // 1. What is Hook Demo (Rules of Hooks)
 // ==========================================
+
+// A simple ErrorBoundary to catch errors from a conditionally-called hook
+class HookRuleErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, errorMessage: "" };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, errorMessage: error.message };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ marginTop: "15px", backgroundColor: "#ffebee", border: "2px solid #ef5350", padding: "12px", borderRadius: "8px", color: "#c62828" }}>
+          <h4 style={{ margin: "0 0 6px" }}>❌ React Error: Rendered more hooks than during the previous render.</h4>
+          <p style={{ fontSize: "12px", margin: "0 0 6px" }}>
+            <strong>Actual React Error caught:</strong> <code>{this.state.errorMessage}</code>
+          </p>
+          <p style={{ fontSize: "12px", margin: 0 }}>
+            <strong>Why did this happen?</strong> React relies on the <em>order</em> in which Hooks are called each render.
+            By placing <code>useState</code> inside an <code>if</code> block, it ran on the first render but not the second.
+            React's internal index became misaligned and it threw this error.
+          </p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// This component INTENTIONALLY breaks the Rules of Hooks:
+// It calls useState conditionally, which causes React to crash.
+function BrokenHookComponent({ shouldViolate }) {
+  // ✅ Hook 1 — always runs
+  const [normalCount] = useState(0);
+
+  // ❌ Hook 2 — only runs when shouldViolate is true
+  // This breaks the rule: hooks must be called in the same order every render.
+  if (shouldViolate) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [conditionalVal] = useState("VIOLATION");
+    return <div style={{ color: "#c62828", fontFamily: "monospace", fontSize: "12px" }}>Rendering with violation: {conditionalVal} (count was {normalCount})</div>;
+  }
+
+  return <div style={{ color: "#4caf50", fontFamily: "monospace", fontSize: "12px" }}>✅ Rendering normally (count = {normalCount})</div>;
+}
+
 export function WhatIsHookDemo() {
-  const [showErrorSimulation, setShowErrorSimulation] = useState(false);
+  const [showViolation, setShowViolation] = useState(false);
+  // We use a key to remount the ErrorBoundary so errors can be reset
+  const [boundaryKey, setBoundaryKey] = useState(0);
+
+  const triggerViolation = () => {
+    setBoundaryKey(k => k + 1); // fresh ErrorBoundary
+    setShowViolation(true);
+  };
+
+  const resetDemo = () => {
+    setShowViolation(false);
+    setBoundaryKey(k => k + 1);
+  };
 
   return (
     <div className="demo-box">
-      <p>React hooks cannot be called inside if-statements. Let's see what happens if we violate this rule:</p>
-      
-      <button 
-        className="demo-btn" 
-        onClick={() => setShowErrorSimulation(!showErrorSimulation)}
-        style={{ backgroundColor: showErrorSimulation ? "var(--accent-color)" : "" }}
-      >
-        {showErrorSimulation ? "Hide Error Simulation" : "Simulate Hook Rule Violation"}
-      </button>
+      <p>React hooks cannot be called inside if-statements. Click the button to intentionally break this rule and see the <strong>real React error</strong> it throws:</p>
 
-      {showErrorSimulation && (
-        <div className="error-sim-screen" style={{ marginTop: "15px", backgroundColor: "#ffebee", border: "1px solid #ef5350", padding: "12px", borderRadius: "8px", color: "#c62828" }}>
-          <h4>❌ React Developer Error: Rendered more hooks than during the previous render.</h4>
-          <p style={{ fontSize: "12px", margin: "8px 0 0 0" }}>
-            <strong>Why did this happen?</strong> React relies on the order in which Hooks are called. 
-            If a Hook is placed inside an <code>if</code> statement, it might not run on every render. 
-            This breaks the internal index tracker, and React crashes.
-          </p>
-        </div>
-      )}
+      <div className="flex-row" style={{ gap: "8px" }}>
+        <button 
+          className="demo-btn"
+          onClick={triggerViolation}
+          disabled={showViolation}
+          style={{ backgroundColor: showViolation ? "#9e9e9e" : "#ef5350" }}
+        >
+          💥 Trigger Hook Rule Violation
+        </button>
+        <button 
+          className="demo-btn"
+          onClick={resetDemo}
+          style={{ backgroundColor: "#4caf50" }}
+        >
+          🔄 Reset Demo
+        </button>
+      </div>
+
+      <div style={{ marginTop: "14px", padding: "10px", backgroundColor: "rgba(0,0,0,0.04)", borderRadius: "6px", fontSize: "12px", fontFamily: "monospace" }}>
+        <strong>What happens:</strong><br />
+        1st render: <code>useState(0)</code> runs → index 0. Then <code>if(true)</code> → <code>useState("VIOLATION")</code> runs → index 1.<br />
+        2nd render (after state update): <code>useState(0)</code> runs → index 0. Then <code>if(false)</code> → the 2nd hook is skipped!<br />
+        React sees fewer hooks than expected → <strong>crashes with an error ↓</strong>
+      </div>
+
+      <HookRuleErrorBoundary key={boundaryKey}>
+        <BrokenHookComponent shouldViolate={showViolation} />
+      </HookRuleErrorBoundary>
     </div>
   );
 }
@@ -281,10 +350,22 @@ export function UseEffectDemo() {
         that variable is <strong>frozen</strong> at the value it had when the component first mounted. This is called a <em>stale closure</em>.
       </p>
 
+      {/* Simple stale closure concept box */}
+      <div style={{ backgroundColor: "rgba(99, 102, 241, 0.08)", border: "1px solid #6366f1", borderRadius: "6px", padding: "12px", fontSize: "12px", marginBottom: "14px" }}>
+        <strong>🍦 Easy analogy: The Ice Cream Scoop Problem</strong>
+        <p style={{ margin: "6px 0 0" }}>
+          Imagine you take a photo 📷 of an ice cream scoop. Then someone eats half of it. 
+          Your photo still shows the <em>full scoop</em> — because the photo was taken earlier and can't update itself.
+          <br /><br />
+          <code>useEffect</code> with <code>[]</code> is like that photo. It captures the state value at mount-time and <strong>never re-reads it</strong>, 
+          even if the state changes later. Your effect is stuck with the original snapshot.
+        </p>
+      </div>
+
       <div className="flex-row" style={{ gap: "15px", alignItems: "flex-start", marginBottom: "12px" }}>
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: "12px", margin: "0 0 8px" }}>
-            <strong>Stale counter</strong> — increment it, but the effect won't see the new value:
+            <strong>🧊 Stale counter</strong> — increment it, but the effect won't see the new value:
           </p>
           <div className="flex-row" style={{ gap: "8px" }}>
             <button className="demo-btn" onClick={() => setFrozenCount(prev => prev + 1)}>
@@ -294,11 +375,15 @@ export function UseEffectDemo() {
           <div className="sim-log-box" style={{ marginTop: "10px", padding: "8px", fontSize: "12px", fontFamily: "monospace", backgroundColor: "#fff8e1" }}>
             {staleMsg}
           </div>
+          <p style={{ fontSize: "11px", color: "#b45309", marginTop: "6px" }}>
+            ⬆ This interval captured <code>frozenCount = 0</code> at mount. <br />
+            No matter how many times you increment, it's stuck!
+          </p>
         </div>
 
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: "12px", margin: "0 0 8px" }}>
-            <strong>Live counter</strong> (correct — uses functional update, not captured variable):
+            <strong>✅ Live counter</strong> (correct — uses functional update, not captured variable):
           </p>
           <div className="flex-row" style={{ gap: "8px" }}>
             <button className="demo-btn" style={{ backgroundColor: "#4caf50" }} onClick={() => setLiveCount(prev => prev + 1)}>
@@ -308,7 +393,23 @@ export function UseEffectDemo() {
           <div className="sim-log-box" style={{ marginTop: "10px", padding: "8px", fontSize: "12px", fontFamily: "monospace", backgroundColor: "#e8f5e9" }}>
             Live count is always current: <strong>{liveCount}</strong>
           </div>
+          <p style={{ fontSize: "11px", color: "#166534", marginTop: "6px" }}>
+            ⬆ This just reads state from React's render cycle directly — always fresh!
+          </p>
         </div>
+      </div>
+
+      {/* Step-by-step breakdown */}
+      <div style={{ backgroundColor: "rgba(0,0,0,0.04)", borderRadius: "6px", padding: "12px", fontSize: "12px", marginBottom: "12px" }}>
+        <strong>🔍 Step-by-step breakdown of what happens:</strong>
+        <ol style={{ paddingLeft: "16px", margin: "8px 0 0" }}>
+          <li>Component mounts → <code>useEffect</code> runs with <code>[]</code> (runs once)</li>
+          <li>The interval callback captures <code>frozenCount = 0</code> in its closure (like a photo)</li>
+          <li>You click Increment → React updates <code>frozenCount</code> to 1, 2, 3…</li>
+          <li>The interval still runs every 1.5s but reads its OLD snapshot → always prints <code>0</code></li>
+          <li><strong>Fix 1:</strong> Change <code>[]</code> to <code>[frozenCount]</code> → effect re-subscribes on each change</li>
+          <li><strong>Fix 2:</strong> Use <code>useRef</code> → always points to latest value without re-running effect</li>
+        </ol>
       </div>
 
       <p className="demo-instruction">
@@ -324,20 +425,38 @@ export function UseEffectDemo() {
 // 5. useRef Demo
 // ==========================================
 export function UseRefDemo() {
-  // Ref focusing demo:
+  const localInputRef = useRef(null);
+
+  // Ref for storing a mutable value without re-rendering
+  const renderCountRef = useRef(0);
+  renderCountRef.current += 1; // This does NOT trigger a re-render!
+
+  const [displayCount, setDisplayCount] = useState(0); // This DOES trigger re-render
+  const mutationCountRef = useRef(0);
+
   const focusInput = () => {
-    // We access the search input located inside the Header directly from here!
-    // Since the search input ref is registered in our App or Header, we tell the document
-    // to focus the search box. Alternatively, we focus a local test input:
     localInputRef.current.focus();
   };
 
-  const localInputRef = useRef(null);
+  const incrementMutationRef = () => {
+    mutationCountRef.current += 1; // Update ref — NO re-render happens
+    // (We force a state update just to show the ref value in the UI)
+    setDisplayCount(c => c + 1);
+  };
 
   return (
     <div className="demo-box">
-      <p>1. Ref to access raw DOM element (Focus Input):</p>
+      {/* Purpose 1: DOM reference */}
+      <h5 style={{ marginBottom: "6px", borderBottom: "1px solid var(--border-color)", paddingBottom: "6px" }}>
+        1. Ref to access raw DOM element (Focus Input):
+      </h5>
+      <p style={{ fontSize: "12px", marginBottom: "8px", color: "var(--text-muted)" }}>
+        <code>useRef</code> gives you a <strong>direct link to the HTML element</strong>. 
+        When you click the button below, <code>localInputRef.current.focus()</code> imperatively focuses the input — 
+        no state change needed, no re-render triggered!
+      </p>
       <div className="flex-row">
+        <label htmlFor="focus-demo-input" style={{ display: "none" }}>Focus demo field</label>
         <input 
           id="focus-demo-input"
           name="focus-demo-input"
@@ -349,7 +468,30 @@ export function UseRefDemo() {
         />
         <button className="demo-btn" onClick={focusInput}>Focus Field</button>
       </div>
-      
+
+      {/* Purpose 2: Mutable value without re-render */}
+      <h5 style={{ margin: "20px 0 6px", borderBottom: "1px solid var(--border-color)", paddingBottom: "6px" }}>
+        2. Ref to store a value without triggering re-renders:
+      </h5>
+      <p style={{ fontSize: "12px", marginBottom: "8px", color: "var(--text-muted)" }}>
+        Unlike <code>useState</code>, writing to <code>myRef.current</code> does <strong>not</strong> cause a re-render.
+        This is useful for tracking values (like render counts or timers) silently in the background.
+      </p>
+      <div style={{ display: "flex", gap: "12px" }}>
+        <div style={{ flex: 1, padding: "12px", border: "1px dashed var(--border-color)", borderRadius: "8px", backgroundColor: "rgba(0,0,0,0.02)" }}>
+          <strong>useRef counter:</strong><br />
+          <span style={{ fontFamily: "monospace", fontSize: "14px" }}>mutationCountRef.current = {mutationCountRef.current}</span><br />
+          <small style={{ color: "var(--text-muted)" }}>(updates silently — this number only shows when state forces a re-render)</small>
+        </div>
+      </div>
+      <button className="demo-btn" style={{ marginTop: "8px" }} onClick={incrementMutationRef}>
+        Increment Ref Counter (triggers forced display refresh)
+      </button>
+      <p style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "6px" }}>
+        ℹ️ This component has re-rendered <strong>{renderCountRef.current}</strong> time(s) in total.
+        Notice the ref counter tracks every increment accurately even though the ref update itself didn't re-render anything.
+      </p>
+
       <p className="demo-instruction" style={{ marginTop: "12px" }}>
         <strong>Also check:</strong> Look at the very bottom of this screen! There is a message showing the topic you were reading <em>before</em> clicking this page. That value was stored inside a <code>useRef</code> box so it didn't reset on render.
       </p>

@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate, useParams, useLocation } from "react-router-dom";
 
 // ==========================================
@@ -133,6 +133,176 @@ export function ReactRouterHooksDemo() {
       <div className="flex-row">
         <button className="demo-btn" onClick={() => navigate(-1)}>🔙 Go Back (navigate(-1))</button>
         <button className="demo-btn" onClick={() => navigate("/topic/usestate-hook")}>🚀 Go to useState page</button>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// 5. Private Route Auth Timing Demo
+// ==========================================
+export function PrivateRouteTimingDemo() {
+  const [simState, setSimState] = useState("idle"); // idle | loading | loggedIn | loggedOut
+  const [elapsed, setElapsed] = useState(0);
+  const timerRef = useRef(null);
+
+  const runSimulation = (shouldSucceed) => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setSimState("loading");
+    setElapsed(0);
+
+    // Simulate 3-second auth check (like verifying a JWT token with a slow server)
+    let ms = 0;
+    timerRef.current = setInterval(() => {
+      ms += 100;
+      setElapsed(ms);
+      if (ms >= 3000) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+        setSimState(shouldSucceed ? "loggedIn" : "loggedOut");
+      }
+    }, 100);
+  };
+
+  const reset = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setSimState("idle");
+    setElapsed(0);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
+  return (
+    <div className="demo-box">
+      <p>
+        If your <code>PrivateRoute</code> needs 3 seconds to verify auth (e.g., checking a token with a slow API), 
+        what does the user see during those 3 seconds? <strong>Does the private page flash?</strong>
+      </p>
+
+      {/* Key answer box */}
+      <div style={{ backgroundColor: "rgba(99, 102, 241, 0.08)", border: "1px solid #6366f1", borderRadius: "8px", padding: "12px", marginBottom: "16px", fontSize: "13px" }}>
+        <strong>🔑 The Answer: No, the private page is NOT shown.</strong>
+        <ul style={{ margin: "8px 0 0", paddingLeft: "18px" }}>
+          <li>During auth check → show a <strong>loading/skeleton screen</strong> (not the private content)</li>
+          <li>Auth succeeded → <strong>then</strong> render the private route content</li>
+          <li>Auth failed → redirect to <code>/login</code> immediately</li>
+          <li>The private component is never even <em>mounted</em> until auth resolves</li>
+        </ul>
+      </div>
+
+      {/* Code pattern */}
+      <pre style={{ backgroundColor: "rgba(0,0,0,0.04)", padding: "10px", borderRadius: "6px", fontSize: "11px", overflowX: "auto", marginBottom: "14px" }}>
+{`function PrivateRoute({ isLoggedIn, isCheckingAuth }) {
+  // Step 1: Still verifying — show skeleton, NOT the private page!
+  if (isCheckingAuth) return <LoadingSkeleton />;
+
+  // Step 2: Verified — show private page or redirect
+  return isLoggedIn ? <Outlet /> : <Navigate to="/login" />;
+}`}
+      </pre>
+
+      {/* Interactive simulation */}
+      <h5 style={{ borderBottom: "1px solid var(--border-color)", paddingBottom: "6px", marginBottom: "10px" }}>
+        🎮 Simulate a 3-Second Auth Check:
+      </h5>
+
+      <div className="flex-row" style={{ gap: "8px", marginBottom: "14px" }}>
+        <button
+          className="demo-btn"
+          onClick={() => runSimulation(true)}
+          disabled={simState === "loading"}
+          style={{ backgroundColor: "#4caf50" }}
+        >
+          ✅ Simulate Login Success (3s delay)
+        </button>
+        <button
+          className="demo-btn"
+          onClick={() => runSimulation(false)}
+          disabled={simState === "loading"}
+          style={{ backgroundColor: "#ef5350" }}
+        >
+          ❌ Simulate Login Failure (3s delay)
+        </button>
+        <button className="demo-btn" onClick={reset} style={{ backgroundColor: "#607d8b" }}>
+          🔄 Reset
+        </button>
+      </div>
+
+      {/* Simulation viewport */}
+      <div style={{
+        border: "2px solid var(--border-color)",
+        borderRadius: "8px",
+        padding: "16px",
+        minHeight: "120px",
+        position: "relative",
+        backgroundColor: "rgba(0,0,0,0.02)"
+      }}>
+        <div style={{ fontSize: "10px", color: "var(--text-muted)", marginBottom: "8px", fontFamily: "monospace" }}>
+          MOCK BROWSER VIEWPORT
+        </div>
+
+        {simState === "idle" && (
+          <div style={{ textAlign: "center", color: "var(--text-muted)", paddingTop: "20px" }}>
+            Click a button above to start the simulation
+          </div>
+        )}
+
+        {simState === "loading" && (
+          <div>
+            <div style={{ fontSize: "12px", marginBottom: "10px", color: "#ff9800" }}>
+              ⏳ Checking authentication... ({(elapsed / 1000).toFixed(1)}s / 3.0s)
+            </div>
+            {/* Skeleton loader — this is what user sees, NOT the private page! */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ height: "18px", borderRadius: "4px", backgroundColor: "rgba(0,0,0,0.1)", width: "60%", animation: "pulse 1.5s infinite" }}></div>
+              <div style={{ height: "12px", borderRadius: "4px", backgroundColor: "rgba(0,0,0,0.07)", width: "85%", animation: "pulse 1.5s infinite" }}></div>
+              <div style={{ height: "12px", borderRadius: "4px", backgroundColor: "rgba(0,0,0,0.07)", width: "70%", animation: "pulse 1.5s infinite" }}></div>
+            </div>
+            <div style={{ marginTop: "8px", fontSize: "11px", color: "var(--text-muted)" }}>
+              🛡️ <em>PrivateRoute is showing a skeleton — private content is NOT mounted yet!</em>
+            </div>
+            {/* Progress bar */}
+            <div style={{ marginTop: "10px", height: "4px", backgroundColor: "rgba(0,0,0,0.1)", borderRadius: "2px" }}>
+              <div style={{
+                height: "100%",
+                width: `${(elapsed / 3000) * 100}%`,
+                backgroundColor: "#ff9800",
+                borderRadius: "2px",
+                transition: "width 0.1s linear"
+              }}></div>
+            </div>
+          </div>
+        )}
+
+        {simState === "loggedIn" && (
+          <div style={{ backgroundColor: "#e8f5e9", border: "1px solid #4caf50", padding: "12px", borderRadius: "6px" }}>
+            <strong style={{ color: "#2e7d32" }}>✅ Auth verified! Private content mounted:</strong>
+            <div style={{ marginTop: "8px", fontFamily: "monospace", fontSize: "12px" }}>
+              <div>🔐 Secret Dashboard — Welcome back!</div>
+              <div>💰 Account balance: $1,234.56</div>
+              <div>📊 Personal analytics data…</div>
+            </div>
+            <div style={{ marginTop: "6px", fontSize: "11px", color: "#2e7d32" }}>
+              ✅ This only appeared AFTER auth was confirmed. The user never saw it during the 3s check!
+            </div>
+          </div>
+        )}
+
+        {simState === "loggedOut" && (
+          <div style={{ backgroundColor: "#ffebee", border: "1px solid #ef5350", padding: "12px", borderRadius: "6px" }}>
+            <strong style={{ color: "#c62828" }}>❌ Auth failed! Redirecting to /login...</strong>
+            <div style={{ marginTop: "8px", fontSize: "12px" }}>
+              The private page was <strong>never shown</strong>. React Router's Navigate component is triggered.
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

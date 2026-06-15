@@ -18,7 +18,8 @@ import {
   JsxJsDifferenceDemo,
   ConditionalRenderingDemo,
   ListsKeysDemo,
-  ReactFragmentsDemo
+  ReactFragmentsDemo,
+  JsxRuntimeRafceDemo
 } from "../pages/topics/Group2Components";
 import {
   ParentChildDemo,
@@ -47,7 +48,8 @@ import {
   ReactRouterDemo,
   RoutesPublicPrivateDemo,
   LinkVsNavLinkDemo,
-  ReactRouterHooksDemo
+  ReactRouterHooksDemo,
+  PrivateRouteTimingDemo
 } from "../pages/topics/Group6Routing";
 import {
   DashboardLayoutDemo
@@ -64,7 +66,8 @@ import {
   AxiosVsFetchDemo,
   AxiosFetchPreflightDemo,
   AsyncAwaitDemo,
-  ReactQueryDemo
+  ReactQueryDemo,
+  FetchErrorCodesDemo
 } from "../pages/topics/Group9ApiCalls";
 import {
   ComponentLifecycleDemo,
@@ -131,6 +134,7 @@ const DEMO_MAP = {
   "conditional-rendering": ConditionalRenderingDemo,
   "lists-keys": ListsKeysDemo,
   "react-fragments": ReactFragmentsDemo,
+  "jsx-runtime-rafce": JsxRuntimeRafceDemo,
   // Group 3
   "communication-parent-child": ParentChildDemo,
   "what-is-state": WhatIsStateDemo,
@@ -156,6 +160,7 @@ const DEMO_MAP = {
   "routes-public-private": RoutesPublicPrivateDemo,
   "link-vs-navlink": LinkVsNavLinkDemo,
   "react-router-hooks": ReactRouterHooksDemo,
+  "private-route-auth-timing": PrivateRouteTimingDemo,
   // Group 7
   "dashboard-layout": DashboardLayoutDemo,
   // Group 8
@@ -170,6 +175,7 @@ const DEMO_MAP = {
   "axios-fetch-preflight": AxiosFetchPreflightDemo,
   "async-await-react": AsyncAwaitDemo,
   "react-query": ReactQueryDemo,
+  "fetch-error-codes": FetchErrorCodesDemo,
   // Group 10
   "component-lifecycle": ComponentLifecycleDemo,
   "react-memo": ReactMemoDemo,

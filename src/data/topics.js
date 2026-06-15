@@ -227,6 +227,21 @@ const element = React.createElement('div', { id: 'main' },
     howThisAppUsesIt: "This learning app is written in `.jsx` files. If you inspect the downloaded files in the network tab, you will see Vite has compiled them into pure `.js` bundles containing nested JS function calls.",
     outcomeToCheck: "Press F12, open the 'Sources' tab. Find `src/App.jsx` in the folder tree on the left. You will see that the code loaded in the browser has been transformed from JSX tags into raw JavaScript browser code."
   },
+  {
+    id: "jsx-runtime-rafce",
+    title: "JSX Runtime, Compilation & RAFCE",
+    group: "Group 2 — Components",
+    summary: "JSX is not valid JavaScript. It is a syntax extension that compiles to standard JS function calls (like React.createElement) before reaching the browser. Snippets like RAFCE automate component scaffolding.",
+    howItWorks: "Vite or Babel automatically translates JSX into plain JavaScript so that browsers can run it. Trying to run JSX in a plain .js file fails unless we configure the bundler, whereas writing React.createElement directly works anywhere. VS Code snippets like 'rafce' quickly scaffold components.",
+    realLife: "Writing shorthand symbols instead of full text. Typists use shorthand to write faster, and the publisher translates it back into clean printed text for the reader. RAFCE is a pre-cut stamp that inks a default template instantly.",
+    codeExample: `// What you write (JSX):
+const element = <h1 className="title">Hello</h1>;
+
+// Compiled JS:
+const element = React.createElement("h1", { className: "title" }, "Hello");`,
+    howThisAppUsesIt: "We have built an interactive runtime playground inside the components tab so you can test how JSX compiles, understand why it crashes in plain JS files without proper compiler configuration, and practice standard VS Code component snippets.",
+    outcomeToCheck: "Switch to the 'JSX Runtime, Compilation & RAFCE' topic. Interact with the tabs to see visual code comparisons for compilation, file extensions (.js vs .jsx), and VS Code snippet references."
+  },
 
   // ==========================================
   // GROUP 3 — Data flow
@@ -964,6 +979,20 @@ function UserProfile() {
     outcomeToCheck: "Check the URL bar info display on the demo board below. It displays the path segments parsed from the live browser location parameters in real-time."
   },
   {
+    id: "private-route-auth-timing",
+    title: "Private Route Auth Timing",
+    group: "Group 6 — Routing",
+    summary: "When a private route performs an asynchronous auth check, it should render a loading skeleton or landing state, ensuring the protected content is never mounted or flashed to unauthorized users.",
+    howItWorks: "During the auth check (e.g. verifying a JWT), the auth state is in a pending/checking phase. We render a Loading component. The private content is only rendered once authorization is successfully confirmed. If auth fails, we redirect directly.",
+    realLife: "A bank vault lobby. When you type your PIN code, you wait in the security lobby (loading screen). The steel doors only slide open (private page mounts) once the system verifies your code. You never catch a glimpse of the cash inside beforehand.",
+    codeExample: `function PrivateRoute({ isLoggedIn, isCheckingAuth }) {
+  if (isCheckingAuth) return <LoadingSkeleton />; // No flash of private page!
+  return isLoggedIn ? <Outlet /> : <Navigate to="/login" />;
+}`,
+    howThisAppUsesIt: "We simulated a slow 3-second authorization check on this route's demo. You can trigger login success or failure to see how the skeleton placeholder is rendered during the check, guaranteeing no secret data leaks.",
+    outcomeToCheck: "Click the buttons in the Private Route Auth Timing simulator. Notice the mock browser displays a pulse skeleton animation during the 3-second check, and only renders the secret data after success."
+  },
+  {
     id: "async-await-react",
     title: "Async/Await in React",
     group: "Group 9 — API calls",
@@ -1008,6 +1037,26 @@ function UsersList() {
 }`,
     howThisAppUsesIt: "We configure a QueryClientProvider wrapping our app, and run a query demonstration below fetching items from JSONPlaceholder showing cache status highlights.",
     outcomeToCheck: "Trigger the query fetch below. Switch topics and return here: notice that the table loads instantly from the cache while showing a subtle background sync indicator."
+  },
+  {
+    id: "fetch-error-codes",
+    title: "Fetch API 400 & 500 Error Codes",
+    group: "Group 9 — API calls",
+    summary: "The Fetch API does not throw an error or reject the promise for HTTP error status codes (like 400 or 500). Instead, you must check the response.ok property manually.",
+    howItWorks: "Fetch only rejects a promise if there is a real network failure (e.g. DNS failure, offline). For status 400, 404, or 500, the promise resolves successfully, and you must check response.ok (which is true only for status 200-299) to throw an error manually.",
+    realLife: "A mail carrier. They successfully deliver a letter saying your library card is expired (404/500). The delivery itself succeeded (resolved promise). It's up to you to open the envelope and see it's an error.",
+    codeExample: `fetch(url)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("HTTP error " + response.status); // Must throw manually!
+    }
+    return response.json();
+  })
+  .catch(err => {
+    console.error("Caught error:", err);
+  });`,
+    howThisAppUsesIt: "Our demo page lets you send requests that return status 200, 404, 500, or a domain-not-found network error. It logs the step-by-step resolution of the promise, proving that only manual throws handle HTTP errors.",
+    outcomeToCheck: "Click the HTTP 404 or 500 buttons in the simulator below. Note in the log that the fetch promise resolves, and our code manually catches the status to trigger the catch block."
   },
   {
     id: "component-lifecycle",
