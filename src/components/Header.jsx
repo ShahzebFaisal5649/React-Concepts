@@ -39,10 +39,14 @@ export const Header = React.memo(function Header({ onSearchChange, isLoggedIn, o
       if (event.key === "/") {
         const active = document.activeElement;
         
+        // If the search input is already focused, let the '/' key be typed normally
+        if (active === searchInputRef.current) {
+          return;
+        }
+
         // If the user is typing in some OTHER input/textarea, do not intercept '/'
         if (
           active &&
-          active !== searchInputRef.current &&
           (active.tagName === "INPUT" ||
             active.tagName === "TEXTAREA" ||
             active.isContentEditable)
@@ -50,10 +54,9 @@ export const Header = React.memo(function Header({ onSearchChange, isLoggedIn, o
           return;
         }
 
-        // For search input or body: focus, prevent typing '/', and select existing text
+        // For body or non-input elements: focus search input and prevent typing '/'
         event.preventDefault();
         searchInputRef.current?.focus();
-        searchInputRef.current?.select();
       }
     };
 
